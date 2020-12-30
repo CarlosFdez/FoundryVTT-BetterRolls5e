@@ -207,11 +207,11 @@ export class ActorUtils {
 		return ActorUtils.hasElvenAccuracy(actor) && ["dex", "int", "wis", "cha"].includes(ability);
 	}
 
-	static hasSavageAttacks(actor) {
+	static hasBonusCritDice(actor) {
 		try { 
-			return actor.getFlag("dnd5e", "savageAttacks");
+			return Number(actor.getFlag("dnd5e", "meleeCriticalDamageDice")) || 0;
 		} catch(error) {
-			return actor.getFlag("dnd5eJP", "savageAttacks");
+			return Number(actor.getFlag("dnd5eJP", "meleeCriticalDamageDice")) || 0;
 		}
 	}
 
@@ -531,14 +531,14 @@ export class ItemUtils {
 	}
 
 	/**
-	 * Checks if the item applies savage attacks (bonus crit).
-	 * Returns false if the actor doesn't have savage attacks, if the item
+	 * Checks if the item applies bonus crit dice on weapon attacks.
+	 * Returns false if the actor doesn't have bonus crit dice, if the item
 	 * is not a weapon, or if there is no item.
 	 * @param {item?} item 
 	 */
-	static appliesSavageAttacks(item) {
+	static appliesBonusCritDice(item) {
 		if (item?.actor && item?.data.type === "weapon") {
-			return ActorUtils.hasSavageAttacks(item.actor);
+			return ActorUtils.hasBonusCritDice(item.actor);
 		}
 
 		return false;
@@ -659,7 +659,7 @@ export class ItemUtils {
 	 * @param {string} rollFormula
 	 * @returns {Roll | boolean} the crit result, or false if there is no dice
 	 */
-	static getCritRoll(baseFormula, baseTotal, {settings=null, savage=false}={}) {
+	static getCritRoll(baseFormula, baseTotal, {settings=null, bonusCritDice=false}={}) {
 		const critFormula = baseFormula.replace(/[+-]+\s*(?:@[a-zA-Z0-9.]+|[0-9]+(?![Dd]))/g,"").concat();
 		let critRoll = new Roll(critFormula);
 		
@@ -668,7 +668,7 @@ export class ItemUtils {
 			return false;
 		}
 		
-		const add = savage ? 1 : 0;
+		const add = bonusCritDice ? bonusCritDice : 0;
 		critRoll.alter(1, add);
 		critRoll.roll();
 

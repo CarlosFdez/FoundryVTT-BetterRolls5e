@@ -236,7 +236,7 @@ export class CustomRoll {
 	 * @param {string?} options.damageType
 	 * @param {string?} options.title title to display. If not given defaults to damage type
 	 * @param {boolean?} options.isCrit Whether to roll crit damage
-	 * @param {boolean?} options.savage If true/false, sets the savage property. Falls back to using the item if not given, or false otherwise.
+	 * @param {boolean?} options.bonusCritDice Number of additional dice to be rolled on a crit (Savage Attacks, Brutal Critical)
 	 * @param {boolean?} options.hidden true if damage prompt required, false if damage prompt never
 	 * @param {BRSettings} options.settings Override config to use for the roll
 	 * @returns {import("./renderer.js").DamageDataProps}
@@ -246,7 +246,7 @@ export class CustomRoll {
 		const actor = options?.actor ?? item?.actor;
 		const isVersatile = damageIndex === "versatile";
 		const isFirst = damageIndex === 0 || damageIndex === "versatile";
-		const savage = options.savage ?? ItemUtils.appliesSavageAttacks(item);
+		const bonusCritDice = options.bonusCritDice ?? ItemUtils.appliesBonusCritDice(item);
 		
 		const settings = getSettings(options.settings);
 		const { critBehavior } = settings;
@@ -310,7 +310,7 @@ export class CustomRoll {
 		let critRoll = null;
 		if (damageIndex !== "other") {
 			if (isCrit && critBehavior !== "0") {
-				critRoll = ItemUtils.getCritRoll(baseRoll.formula, total, { settings, savage });
+				critRoll = ItemUtils.getCritRoll(baseRoll.formula, total, { settings, bonusCritDice });
 			}
 		}
 

@@ -227,8 +227,8 @@ export class BetterRollsChatCard {
 				}
 
 				const baseRoll = damage.baseRoll;
-				const savage = ItemUtils.appliesSavageAttacks(item);
-				damage.critRoll = ItemUtils.getCritRoll(baseRoll.formula, baseRoll.total, { settings, savage });
+				const bonusCritDice = ItemUtils.appliesBonusCritDice(item);
+				damage.critRoll = ItemUtils.getCritRoll(baseRoll.formula, baseRoll.total, { settings, bonusCritDice });
 				this.dicePool.push(damage.critRoll);
 				updated = true;
 			}
